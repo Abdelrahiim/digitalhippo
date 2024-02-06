@@ -38,7 +38,7 @@ const NavItem: FC<NavItemProps> = ({
 					/>
 				</Button>
 			</div>
-			{isOpen ? (
+			{isOpen && (
 				<div
 					className={cn(
 						"absolute inset-x-0 top-full text-sm text-muted-foreground",
@@ -86,7 +86,7 @@ const NavItem: FC<NavItemProps> = ({
 						</div>
 					</div>
 				</div>
-			) : null}
+			)}
 		</div>
 	);
 };
