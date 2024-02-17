@@ -3,16 +3,20 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "PAYLOAD_CONFIG_PATH=src/payload.config.ts nodemon",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@payloadcms/bundler-webpack": "^1.0.6",
+    "@payloadcms/db-mongodb": "^1.4.1",
+    "@payloadcms/richtext-slate": "^1.4.0",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-label": "^2.0.2",
     "@radix-ui/react-separator": "^1.0.3",
     "@radix-ui/react-slot": "^1.0.2",
+<<<<<<< HEAD
     "@tanstack/react-form": "^0.13.5",
     "@tanstack/react-query": "latest",
     "@tanstack/react-query-devtools": "^5.21.0",
@@ -21,10 +25,16 @@
     "@trpc/next": "next",
     "@trpc/react-query": "next",
     "@trpc/server": "next",
+=======
+    "@types/express": "^4.17.21",
+>>>>>>> origin/main
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "dotenv": "^16.4.1",
+    "express": "^4.18.2",
     "lucide-react": "^0.321.0",
     "next": "14.1.0",
+    "payload": "^2.9.0",
     "react": "^18",
     "react-dom": "^18",
     "tailwind-merge": "^2.2.1",
@@ -32,14 +42,15 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
+    "eslint": "^8",
+    "eslint-config-next": "14.1.0",
+    "nodemon": "^3.0.3",
     "postcss": "^8",
     "tailwindcss": "^3.3.0",
-    "eslint": "^8",
-    "eslint-config-next": "14.1.0"
+    "typescript": "^5"
   }
 }
