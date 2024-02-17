@@ -30,9 +30,6 @@ const Page = () => {
 			console.log(value);
 		},
 		validatorAdapter: zodValidator,
-		validators: {
-			onSubmit: Schema,
-		},
 	});
 	return (
 		<>
@@ -64,9 +61,9 @@ const Page = () => {
 									<div className="grid gap-1 py-2">
 										<form.Field
 											name="email"
-											// validators={{
-											// 	onChange: z.string().email(),
-											// }}
+											validators={{
+												onChange: z.string().email(),
+											}}
 											// eslint-disable-next-line react/no-children-prop
 											children={(field) => {
 												return (
@@ -98,23 +95,22 @@ const Page = () => {
 									<div className="grid gap-1 py-2">
 										<form.Field
 											name="password"
-											// validators={{
-											// 	onChange: z
-											// 		.string()
-											// 		.min(8, "Password must be 8 or more character")
-											// 		.max(35)
-											// 		.regex(
-											// 			/[A-Z]/,
-											// 			"Password must contain at least one uppercase letter"
-											// 		) // Require uppercase
-											// 		.regex(
-											// 			/\d/,
-											// 			"Password must contain at least one number"
-											// 		),
-											// }}
+											validators={{
+												onChange: z
+													.string()
+													.min(8, "Password must be 8 or more character")
+													.max(35)
+													.regex(
+														/[A-Z]/,
+														"Password must contain at least one uppercase letter"
+													) // Require uppercase
+													.regex(
+														/\d/,
+														"Password must contain at least one number"
+													),
+											}}
 											// eslint-disable-next-line react/no-children-prop
 											children={(field) => {
-												// Avoid hasty abstractions. Render props are great!
 												return (
 													<>
 														<Label htmlFor={field.name}>Password</Label>
