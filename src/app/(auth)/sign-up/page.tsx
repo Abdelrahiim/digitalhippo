@@ -6,28 +6,26 @@ import { cn } from "@/lib/utils";
 import { Label } from "@radix-ui/react-label";
 import { useForm } from "@tanstack/react-form";
 import { zodValidator } from "@tanstack/zod-form-adapter";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 import { z } from "zod";
-const Schema = z.object({
-	email: z.string().email(),
-	password: z
-		.string()
-		.min(8, "Password must be 8 or more character")
-		.max(35)
-		.regex(/[A-Z]/, "Password must contain at least one uppercase letter") // Require uppercase
-		.regex(/\d/, "Password must contain at least one number"),
-});
+import { trpc } from "@/trpc/client";
 
 const Page = () => {
+	const { mutate, isLoading, data } = trpc.auth.createPayloadUser.useMutation();
+	console.log(data);
 	const form = useForm({
 		defaultValues: {
 			email: "",
 			password: "",
 		},
 		onSubmit: async ({ value }) => {
-			console.log(value);
+			mutate(value, {
+				onError: (error) => {
+					console.log(error.message);
+				},
+			});
 		},
 		validatorAdapter: zodValidator,
 	});
@@ -64,33 +62,30 @@ const Page = () => {
 											validators={{
 												onChange: z.string().email(),
 											}}
-											// eslint-disable-next-line react/no-children-prop
-											children={(field) => {
-												return (
-													<>
-														<Label htmlFor={field.name}>Email</Label>
-														<Input
-															type="email"
-															name={field.name}
-															value={field.state.value}
-															onBlur={field.handleBlur}
-															placeholder="you@examble.com"
-															className={cn({
-																"focus-visible:ring-red-500": true,
-															})}
-															onChange={(e) =>
-																field.handleChange(e.target.value)
-															}
-														/>
-														{field.state.meta.touchedErrors && (
-															<p className="text-red-500">
-																{field.state.meta.touchedErrors}
-															</p>
-														)}
-													</>
-												);
-											}}
-										/>
+										>
+											{(field) => (
+												<>
+													<Label htmlFor={field.name}>Email</Label>
+													<Input
+														type="email"
+														name={field.name}
+														value={field.state.value}
+														onBlur={field.handleBlur}
+														placeholder="you@examble.com"
+														className={cn({
+															"focus-visible:ring-red-500":
+																field.state.meta.errors.length,
+														})}
+														onChange={(e) => field.handleChange(e.target.value)}
+													/>
+													{field.state.meta.touchedErrors && (
+														<p className="text-red-500">
+															{field.state.meta.touchedErrors}
+														</p>
+													)}
+												</>
+											)}
+										</form.Field>
 									</div>
 									<div className="grid gap-1 py-2">
 										<form.Field
@@ -109,44 +104,51 @@ const Page = () => {
 														"Password must contain at least one number"
 													),
 											}}
-											// eslint-disable-next-line react/no-children-prop
-											children={(field) => {
-												return (
-													<>
-														<Label htmlFor={field.name}>Password</Label>
-														<Input
-															type="password"
-															name={field.name}
-															value={field.state.value}
-															onBlur={field.handleBlur}
-															placeholder="Password"
-															className={cn({
-																"focus-visible:ring-red-500":
-																	field.state.meta.errors.length,
-															})}
-															onChange={(e) =>
-																field.handleChange(e.target.value)
-															}
-														/>
-														{field.state.meta.touchedErrors && (
-															<p className="text-red-500">
-																{field.state.meta.touchedErrors}
-															</p>
-														)}
-													</>
-												);
-											}}
-										/>
+										>
+											{(field) => (
+												<>
+													<Label htmlFor={field.name}>Password</Label>
+													<Input
+														type="password"
+														name={field.name}
+														value={field.state.value}
+														onBlur={field.handleBlur}
+														placeholder="Password"
+														className={cn({
+															"focus-visible:ring-red-500":
+																field.state.meta.errors.length,
+														})}
+														onChange={(e) => field.handleChange(e.target.value)}
+													/>
+													{field.state.meta.touchedErrors && (
+														<p className="text-red-500">
+															{field.state.meta.touchedErrors}
+														</p>
+													)}
+												</>
+											)}
+										</form.Field>
 									</div>
 									<form.Subscribe
-										selector={(state) => [state.canSubmit, state.isSubmitting]}
-										// eslint-disable-next-line react/no-children-prop
-										children={([canSubmit, isSubmitting]) => (
+										selector={(state) => [
+											state.canSubmit,
+											state.isSubmitting,
+											state.errors,
+										]}
+									>
+										{([canSubmit, isSubmitting]) => (
 											<Button type="submit" disabled={!canSubmit}>
-												{isSubmitting ? "..." : "Submit"}
+												{isSubmitting || isLoading ? (
+													<>
+														<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+														Signing up
+													</>
+												) : (
+													"Sign Up"
+												)}
 											</Button>
 										)}
-									/>
+									</form.Subscribe>
 								</div>
 							</form>
 						</form.Provider>

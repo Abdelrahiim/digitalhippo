@@ -1,10 +1,17 @@
-import dotenv from "dotenv";
-import path from "path";
-import payload from "payload";
+import payload, { Payload } from "payload";
 import type { InitOptions } from "payload/config";
+import nodemailer from "nodemailer";
+import { config } from "./settings";
 
-dotenv.config({
-	path: path.resolve(__dirname, "../.env"),
+console.log(config);
+const transporter = nodemailer.createTransport({
+	host: "smtp.resend.com",
+	secure: true,
+	port: 465,
+	auth: {
+		user: "resend",
+		pass: config.RESEND_API_KEY,
+	},
 });
 
 let cached = (global as any).payload;
@@ -19,8 +26,10 @@ interface Args {
 	initOptions?: Partial<InitOptions>;
 }
 
-export const getPayloadClient = async ({ initOptions }: Args) => {
-	if (!process.env.PAYLOAD_SECRET) {
+export const getPayloadClient = async ({
+	initOptions,
+}: Args = {}): Promise<Payload> => {
+	if (!config.PAYLOAD_SECRET) {
 		throw new Error("PAYLOAD_SECRET is missing");
 	}
 	if (cached.client) {
@@ -28,7 +37,12 @@ export const getPayloadClient = async ({ initOptions }: Args) => {
 	}
 	if (!cached.promise) {
 		cached.promise = payload.init({
-			secret: process.env.PAYLOAD_SECRET,
+			email: {
+				transport: transporter,
+				fromAddress: "onboarding@resend.dev",
+				fromName: "DigitalHippo",
+			},
+			secret: config.PAYLOAD_SECRET,
 			local: initOptions?.express ? false : true,
 			...(initOptions || {}),
 		});
